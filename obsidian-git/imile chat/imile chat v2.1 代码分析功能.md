@@ -11,40 +11,36 @@
 
 用户可能提问的内容
 
-1. **代码描述和定位：**
+1. **代码描述：** <font color="#b2a2c7">可以对某个类里所有信息进行总结和描述</font>
     - scanLogContext类有哪些重要字段，并解释其作用
     - {{ 数据表名称 }} 这个表被哪些服务使用到？
-1. **代码结构和依赖关系：**
+1. **代码流程：** <font color="#b2a2c7">可以知道某个类的引用关系</font>
     - 出站扫描功能依赖于哪些其他模块
     - 请描述下复重扫描流程
-2. **代码文档和注释：**
+2. **~~文档和注释~~：** <font color="#b2a2c7">项目中文档类型的信息，json,xml,properties, pom等</font>
     - 能帮我找到关于权限管理管理模块的文档吗？
     - 这段代码逻辑是什么？有相关的注释吗？
-3. **版本历史和代码变更：**
+3. **版本历史和代码变更：** <font color="#b2a2c7">版本的变更历史</font>
 	- 总结下 tms-hub  master 最新 commit 的内容
     - 昨天谁修改了入站扫描相关的代码？
-4. **错误排查和解决：**
+4. **错误排查：** <font color="#b2a2c7">可以从方案维度获取到链路信息</font>
 	- {{ 提供一段报错日志 }} 请分析 tmshub 中问题的报错原因，以及如何解决？
     - {{ 提供api接口url }} 这个API报错 {code} 是什么问题？
-5. **代码优化和重构建议：**
+5. **代码优化和重构：** <font color="#b2a2c7">类似1</font>
     - 数据库查询那部分代码怎么优化性能？
     - 有没有更好的方法来重构这段重复的代码？
-6. **代码测试和覆盖率：**
+6. **代码测试：** <font color="#b2a2c7">可以区分业务和测试的代码，然后进行仿写</font>
     - 请参考il-rdc的单元测试代码规范，给ilts的mailParseService 编写单元测试
     - il-rdc中单元测试对哪些流程进行了测试？
+7. **代码实现：** <font color="#b2a2c7">学习代码，实现代码</font>
+	- 在现有的入站扫描中添加xxx阻断逻辑
 
 
-| v2.1 需要实现的                           | 实现要点                                                                                     | checklist    |
-| ------------------------------------ | ---------------------------------------------------------------------------------------- | ------------ |
-| <font color="#f79646">代码描述和定位</font> | 1. 可以根据{{用户问题}}获取到要找的{{东西名称}}, 最后找到指定的文件。（使用nlp或者llm）<br>2. 根据指定的文件，获取到文件元信息，引用关系，被引用关系。 | 1. 保存文件的元数据。 |
-| <font color="#f79646">代码文档和注释</font> | 1. 除了代码文件，还需要md,pom,properties类型的文件。<br>2. 注释内容需要保存在文件中。                                 |              |
-| <font color="#f79646">错误排查和解决</font> | 1. 根据错误日志获取到调用链，根据调用链的信息可以找到相关的代码块信息                                                     |              |
-
-
-
-
-
-
+| v2.1 需要实现的                           | 实现要点                                                                                     |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| <font color="#f79646">代码描述和定位</font> | 1. 可以根据{{用户问题}}获取到要找的{{东西名称}}, 最后找到指定的文件。（使用nlp或者llm）<br>2. 根据指定的文件，获取到文件元信息，引用关系，被引用关系。 |
+| <font color="#f79646">代码文档和注释</font> | 1. 除了代码文件，还需要md,pom,properties类型的文件。<br>2. 注释内容需要保存在文件中。                                 |
+| <font color="#f79646">错误排查和解决</font> | 根据错误日志获取到调用链，根据调用链的信息可以找到相关的代码块信息                                                        |
 
 
 ### 数据加载
@@ -55,21 +51,140 @@
 
 ### 数据清洗
 java 文件清洗：
-- 无用代码清洗：
-- 提取代码元数据：类，函数名称 （正则表达式分析）
+- 无用代码清洗
+
 
 ### 代码分析
-![[代码分析流程]]
 
-class meta
-- project_name
-- commit_id
-- last_commit_id
-- class_path
-- class_name
-- class_fields
-- class_method
+![[imile chat bot 代码分析流程]]
 
+```json
+PUT /gitlab_document
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "gitlab_url": {
+        "type": "keyword"
+      },
+      "project_name": {
+        "type": "keyword"
+      },
+      "branch": {
+        "type": "keyword"
+      },
+      "document_name": {
+        "type": "keyword"
+      },
+      "document_path": {
+        "type": "keyword"
+      },
+      "document_content": {
+        "type": "text"
+      },
+      "document_content_vector": {
+		"type": "dense_vector",
+		"dims": 1024, 
+		"index": true,  // 启用向量索引，使得可以进行近似最近邻搜索
+		"similarity": "cosine"  // 使用余弦相似性作为向量相似度量方法
+      },
+      "commit_id": {
+        "type": "keyword"
+      },
+      "last_commit_id": {
+        "type": "keyword"
+      },
+      "commiter_name": {
+        "type": "keyword"
+      },
+      "last_commiter_name": {
+        "type": "keyword"
+      },
+      "commiter_date": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "last_commiter_date": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "package_declaration": {
+        "type": "keyword"
+      },
+      "imports": {
+        "type": "keyword"
+      },
+      "fields": {
+        "type": "nested",
+        "properties": {
+          "full_name": {
+            "type": "keyword"
+          },
+          "field_name": {
+            "type": "keyword"
+          },
+          "field_class": {
+            "type": "keyword"
+          },
+          "annotations": {
+            "type": "keyword"
+          }
+        }
+      },
+      "methods": {
+        "type": "nested",
+        "properties": {
+          "method_name": {
+            "type": "keyword"
+          },
+          "method_params": {
+            "type": "nested",
+            "properties": {
+              "param_name": {
+                "type": "keyword"
+              },
+              "param_class": {
+                "type": "keyword"
+              },
+              "full_name": {
+                "type": "keyword"
+              }
+            }
+          },
+          "method_return": {
+            "type": "keyword"
+          },
+          "method_content": {
+            "type": "text"
+          },
+          "method_content_vector": {
+		        "type": "dense_vector",
+			      "dims": 1024, 
+	          "index": true,  // 启用向量索引，使得可以进行近似最近邻搜索
+	          "similarity": "cosine"  // 使用余弦相似性作为向量相似度量方法
+          },
+          "call_chains": {
+            "type": "nested",
+            "properties": {
+              "class_name": {
+                "type": "keyword"
+              },
+              "full_name": {
+                "type": "keyword"
+              },
+              "method_name": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 
 ### 数据切割
@@ -86,74 +201,238 @@ class meta
 
 ### 数据存储
 
-```plantuml
-@startuml
+需要支持向量检索的字段：
 
-entity CODE_DOCUMENT {
-    id: keyword
-    project_name: string
-    branch: string
-    document_name: string
-    document_path: string
-    document_content: string
-    document_vector: vector
-    commit_id: string
-    last_commit_id: string
-}
+document_content:
+methods.method_content:
 
-@enduml
-```
+支持全文检索的字段：
+document_content
+methods.method_content
+
+Es 创建索引 DSL
 ```json
-PUT /chat_record
+PUT /gitlab_document
 {
   "mappings": {
     "properties": {
       "id": {
         "type": "keyword"
       },
-      "question": {
+      "gitlab_url": {
+        "type": "keyword"
+      },
+      "project_name": {
+        "type": "keyword"
+      },
+      "branch": {
+        "type": "keyword"
+      },
+      "document_name": {
+        "type": "keyword"
+      },
+      "document_path": {
+        "type": "keyword"
+      },
+      "document_content": {
         "type": "text"
       },
-      "answer": {
-        "type": "text"
+      "document_content_vector": {
+		    "type": "dense_vector",
+    		"dims": 768,  // 使用768维的嵌入向量
+	    	"index": true,  // 启用向量索引，使得可以进行近似最近邻搜索
+		    "similarity": "cosine"  // 使用余弦相似性作为向量相似度量方法
       },
-      "segments": {
+      "commit_id": {
+        "type": "keyword"
+      },
+      "last_commit_id": {
+        "type": "keyword"
+      },
+      "commiter_name": {
+        "type": "keyword"
+      },
+      "last_commiter_name": {
+        "type": "keyword"
+      },
+      "commiter_date": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "last_commiter_date": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "package_declaration": {
+        "type": "keyword"
+      },
+      "imports": {
+        "type": "keyword"
+      },
+      "fields": {
         "type": "nested",
         "properties": {
-          "id": {
+          "full_name": {
+            "type": "keyword"
+          },
+          "field_name": {
+            "type": "keyword"
+          },
+          "field_class": {
+            "type": "keyword"
+          },
+          "annotations": {
             "type": "keyword"
           }
         }
       },
-      "presets": {
+      "methods": {
         "type": "nested",
         "properties": {
-          "id": {
+          "method_name": {
             "type": "keyword"
+          },
+          "method_params": {
+            "type": "nested",
+            "properties": {
+              "param_name": {
+                "type": "keyword"
+              },
+              "param_class": {
+                "type": "keyword"
+              },
+              "full_name": {
+                "type": "keyword"
+              }
+            }
+          },
+          "method_return": {
+            "type": "keyword"
+          },
+          "method_content": {
+            "type": "text"
+          },
+          "method_content_vector": {
+		        "type": "dense_vector",
+			      "dims": 768,  // 使用768维的嵌入向量
+	          "index": true,  // 启用向量索引，使得可以进行近似最近邻搜索
+	          "similarity": "cosine"  // 使用余弦相似性作为向量相似度量方法
+          },
+          "call_chains": {
+            "type": "nested",
+            "properties": {
+              "class_name": {
+                "type": "keyword"
+              },
+              "full_name": {
+                "type": "keyword"
+              },
+              "method_name": {
+                "type": "keyword"
+              }
+            }
           }
         }
-      },
-      "user_score": {
-        "type": "integer"
-      },
-      "model_score": {
-        "type": "integer"
-      },
-      "created_time": {
-        "type": "date"
-      },
-      "updated_time": {
-        "type": "date"
       }
     }
   }
 }
 ```
 
+
 ### 数据检索
 
+#### 问题预测 prompt 
+```json
+根据{{提问内容}}, 推测问题属于哪个类型
+1. 分析单个类/文件内容
+2. 描述业务/接口/方法流程
+3. 文本检索
+4. 报错/异常分析
+5. 代码编写
+6. 版本控制
+
+提问内容：
+请参考il-rdc的单元测试代码规范，给ilts的mailParseService 编写单元测试
+
+参考json格式进行返回:
+{
+   "index": , //答案的序号
+}
+```
+
+#### 流程描述
+
+```plantuml
+
+!theme vibrant
+
+actor user
+
+participant 页面 as browser
+participant "imile chat" as srv
+entity llm
+database es
+
+user -> browser : 选择问题类型
+user -> browser : 提问
+
+browser -> srv : 发送请求 q
+
+srv -> llm ++: 提供问题，进行类型推测
+note right 
+根据提问内容,推测问题类型:
+1. 描述某文件的内容
+2. 描述接口/方法/的流程
+3. 根据某文本进行全局搜索
+4. 进行报错/异常分析
+5. 进行代码续写、
+6. git版本控制相关
+end note
+llm --> srv --: 返回推测结果
+
+== 代码描述类型问题 ==
+	srv -> llm : 获取问题中关键信息
+	
+	srv -> es ++: 向量检索 q
+	es --> srv --: 返回5个doc
+	srv -> srv : 使用排名前3的content作为参考
+	srv -> llm : 请求
+	llm --> srv : 返回答案
+==流程描述问题==
+	srv -> es ++: 向量检索 q
+	es --> srv --: 返回2个doc
+	srv -> srv : 获取doc.file_name
+	srv -> srv : 获取doc.call_chain
+	srv -> es : 搜索call_chain.name中包含file_name的doc
+	srv -> es : 搜索doc.call_chain中name对于的doc
+	srv -> srv : 整合上下游doc
+	srv -> llm : 请求
+	llm --> srv : 返回答案
+==错误排查问题==
+	srv -> es ++ : 向量检索 q
+	es --> srv --: 返回5个doc
+	srv -> srv : 使用所有content.method作为参考
+	srv -> llm : 请求
+	llm --> srv : 返回答案
+==代码优化==
+    srv --> es :
+	note right : 参考"代码描述"
+==版本控制==
+==代码仿写==
+```
+
+
+
+
 ### 数据返回
-- 提供参考代码在 gitlab 的 url
+- 提供参考代码在 gitlab 的 url```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains
+    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+```
+
 
 
 
