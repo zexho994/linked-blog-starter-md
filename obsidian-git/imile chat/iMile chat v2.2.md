@@ -20,7 +20,6 @@ https://testerhome.com/topics/39628
 
 
 
-
 ### 生成mock数据
 
 > 没人想耗费很多时间写Mock
@@ -317,17 +316,15 @@ https://testerhome.com/topics/39628
 
 ### 用例信息
 
-
-
-## 设计查询模式
-
-
 ## 数据全量同步
 
 通过API接口主动，实现加载器
 
 ## 增量同步
 回调接口，实现更新接口
+
+## 设计查询模式
+
 
 ## 调试 Prompt
 
@@ -337,9 +334,8 @@ https://testerhome.com/topics/39628
 
 
 
-
-
-
-
 # 流程图
+
+数据存储
+
 ![[iMile  chat 对接 自动化测试]]

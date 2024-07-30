@@ -43,7 +43,7 @@
 
 ### 配置插件管理器
 
-```ssh
+```shell
 -- 基本配置示例
 vim.o.number = true         -- 显示行号
 vim.o.syntax = 'on'         -- 启用语法高亮
