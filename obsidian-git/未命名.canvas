@@ -1,9 +1,0 @@
-{
-	"nodes":[
-		{"id":"966089c43a69ada4","x":-240,"y":0,"width":140,"height":60,"type":"text","text":"支持excel"},
-		{"id":"6b7127aa3a402ffc","x":191,"y":-190,"width":250,"height":60,"type":"text","text":""}
-	],
-	"edges":[
-		{"id":"e1ded61727c3bdf4","fromNode":"966089c43a69ada4","fromSide":"right","toNode":"6b7127aa3a402ffc","toSide":"left"}
-	]
-}
